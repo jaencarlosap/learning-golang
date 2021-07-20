@@ -1,5 +1,5 @@
 learning-golang
+main
 bin
 pkg
-src/github.com/*
-!src/github.com/Api
+src/github.com

@@ -1,4 +1,5 @@
+export GO111MODULE=on
 export PATH=$PATH:`which go`
-export GOPATH=`pwd`
 export GOROOT=/usr/local/go 
+export GOPATH=`pwd`/src/github.com/
 export PATH=$PATH:$GOPATH/bin;
