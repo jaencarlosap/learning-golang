@@ -1,5 +1,7 @@
 # Learning-golang
 
-- Load env with [config/config.sh]()
-- start project with command :
-  > <code>bash dev.sh learning-golang</code>
+This project is created for learn how to use golang with a practice example :D
+
+for start project, yo do run command :
+
+    $ make start
