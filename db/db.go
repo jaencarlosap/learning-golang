@@ -6,18 +6,12 @@ import (
 	"os"
 )
 
-func DB() interface{} {
-	os.Open("users.json")
-	// Open our jsonFile
-	jsonFile, _ := os.Open("users.json")
+func DB(response interface{}) {
+	jsonFile, _ := os.Open("db/db.json")
 
-	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
-	var result map[string]interface{}
-	json.Unmarshal([]byte(byteValue), &result)
-
-	return result
+	json.Unmarshal(byteValue, &response)
 }

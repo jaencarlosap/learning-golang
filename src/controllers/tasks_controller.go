@@ -1,10 +1,7 @@
 package controllers
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/janper231/learning-golang/db"
@@ -12,68 +9,77 @@ import (
 )
 
 func GetTasks(c *gin.Context) {
-	c.JSON(200, gin.H{"status": "posted"})
+	response := []*models.Task{}
+
+	db.DB(&response)
+
+	c.JSON(200, gin.H{"status": true, "data": response})
 }
 
 func CreateTask(c *gin.Context) {
-	var newTask models.Task
-	reqBody, err := ioutil.ReadAll(c.Request.Body)
-	tasks := db.DB()
+	response := []*models.Task{}
+	body := &models.Task{}
 
-	if err != nil {
-		c.JSON(http.StatusNotAcceptable, gin.H{"status": "false", "message": "Insert valid data"})
-	}
+	c.ShouldBindJSON(&body)
 
-	json.Unmarshal(reqBody, &newTask)
+	db.DB(&response)
 
-	newTask.ID = len(tasks) + 1
-	tasks = append(tasks, newTask)
+	body.ID = len(response) + 1
 
-	c.JSON(http.StatusAccepted, gin.H{"status": "true", "data": newTask})
+	c.JSON(200, gin.H{"status": "true", "data": body})
 }
 
 func GetTask(c *gin.Context) {
-	taskId := getParams(w, r, "id")
+	Id := c.Param("id")
+	response := []*models.Task{}
 
-	for _, task := range tasks {
-		if task.ID == taskId {
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(task)
+	db.DB(&response)
+
+	for _, task := range response {
+		id, _ := strconv.Atoi(Id)
+
+		if task.ID == id {
+			c.JSON(200, gin.H{"status": "true", "data": task})
 		}
 	}
 }
 
 func DeleteTask(c *gin.Context) {
-	taskId := getParams(w, r, "id")
+	taskId := c.Param("id")
+	response := []*models.Task{}
 
-	for index, task := range tasks {
-		if task.ID == taskId {
-			tasks = append(tasks[:index], tasks[index+1:]...)
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(tasks)
+	db.DB(&response)
+
+	for index, task := range response {
+		id, _ := strconv.Atoi(taskId)
+
+		if task.ID == id {
+			response = append(response[:index], response[index+1:]...)
+
+			c.JSON(200, gin.H{"status": "true", "data": response})
 		}
 	}
 }
 
 func UpdateTask(c *gin.Context) {
-	taskId := getParams(w, r, "id")
-	var updateTask Task
+	IdParam := c.Param("id")
+	body := &models.Task{}
+	tasks := []*models.Task{}
 
-	reqBoyd, err := ioutil.ReadAll(r.Body)
+	c.ShouldBindJSON(&body)
 
-	if err != nil {
-		fmt.Fprintf(w, "Invalid Id")
-	}
-
-	json.Unmarshal(reqBoyd, &updateTask)
+	db.DB(&tasks)
 
 	for index, task := range tasks {
-		if task.ID == taskId {
-			tasks = append(tasks[:index], tasks[index+1:]...)
-			updateTask.ID = taskId
-			tasks = append(tasks, updateTask)
+		Id, _ := strconv.Atoi(IdParam)
 
-			json.NewEncoder(w).Encode(updateTask)
+		if task.ID == Id {
+			tasks = append(tasks[:index], tasks[index+1:]...)
+			body.ID = task.ID
+			tasks = append(tasks, body)
+
+			c.JSON(200, gin.H{"status": "true", "data": tasks})
+			break
 		}
 	}
 }

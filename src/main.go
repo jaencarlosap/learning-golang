@@ -19,8 +19,8 @@ func main() {
 	router.GET("/tasks", controllers.GetTasks)
 	router.POST("/tasks", controllers.CreateTask)
 	router.GET("/task/:id", controllers.GetTask)
-	router.PUT("/task/:id", controllers.UpdateTask)
 	router.DELETE("/task/:id", controllers.DeleteTask)
+	router.PUT("/task/:id", controllers.UpdateTask)
 
 	router.Run(":" + port)
 }
